@@ -87,6 +87,7 @@ useEffect(() => {
       const formData = new FormData();
         formData.append("file", pdfFile);
         formData.append("pages", pages);
+        formData.append("totalPages", numPages);
       const res = await axios.post(
         `${URL1}/pdf-image`,
         formData,

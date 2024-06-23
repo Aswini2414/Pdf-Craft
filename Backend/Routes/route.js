@@ -5,9 +5,10 @@ const path = require("path");
 const fs = require("fs").promises;
 const fs1 = require("fs");
 const { PDFDocument } = require("pdf-lib");
-const pdfConverter = require("pdf-poppler");
+const { Poppler } = require("node-poppler");
+// const pdfConverter = require("pdf-poppler");
 const archiver = require("archiver");
-const sharp = require("sharp");//"@img/sharp-win32-x64": "^0.33.4",
+const sharp = require("sharp"); //"@img/sharp-win32-x64": "^0.33.4",
 
 const dirname1 = path.resolve();
 const outputDir = path.join(dirname1, "uploads");
@@ -53,9 +54,12 @@ router.post("/merge-files", upload.array("files"), async (req, res) => {
     if (!fs1.existsSync(path.join(dirname1, "pdfs/mergedPdf"))) {
       fs1.mkdirSync(path.join(dirname1, "pdfs/mergedPdf"));
     }
-    await fs.writeFile(path.join(dirname1,"pdfs/mergedPdf/newPdf.pdf"), pdfBytes);
+    await fs.writeFile(
+      path.join(dirname1, "pdfs/mergedPdf/newPdf.pdf"),
+      pdfBytes
+    );
     for (let i = 0; i < filenames.length; i++) {
-      fs1.unlink(path.join(outputDir,filenames[i]), (err) => {
+      fs1.unlink(path.join(outputDir, filenames[i]), (err) => {
         if (err) {
           throw err;
         }
@@ -86,7 +90,10 @@ router.post("/split-files", upload.single("file"), async (req, res) => {
     if (!fs1.existsSync(path.join(dirname1, "pdfs/splitedPdf"))) {
       fs1.mkdirSync(path.join(dirname1, "pdfs/splitedPdf"));
     }
-    await fs.writeFile(path.join(dirname1,"pdfs/splitedPdf/newPdf.pdf"), pdfBytes);
+    await fs.writeFile(
+      path.join(dirname1, "pdfs/splitedPdf/newPdf.pdf"),
+      pdfBytes
+    );
 
     fs1.unlink(path.join(outputDir, req.file.filename), (err) => {
       if (err) {
@@ -103,7 +110,7 @@ router.post("/split-files", upload.single("file"), async (req, res) => {
 
 router.post("/pdf-image", upload.single("file"), async (req, res) => {
   try {
-    const { pages } = req?.body;
+    const { pages, totalPages } = req?.body;
     const pagesArr = pages?.split(",");
     let pdfPath = path.join(dirname1, `uploads/${req.file.filename}`);
     let outputDir = path.join(
@@ -120,38 +127,43 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
       await fs.mkdir(outputDir, { recursive: true });
       console.log("Created output directory:", outputDir);
     }
+
+    const poppler = new Poppler();
     if (pagesArr) {
       for (let i = 0; i < pagesArr.length; i++) {
-        let option = {
-          format: "jpeg",
-          out_dir: outputDir,
-          out_prefix: path.basename(pdfPath, path.extname(pdfPath)),
-          page: pagesArr[i],
+        const outputFilePath = path.join(
+          outputDir, `${i}.png`)
+        
+
+        const options = {
+          firstPageToConvert: i,
+          lastPageToConvert: i,
+          pngFile: true,
         };
 
-        // Convert PDF to images
-        const convertResult = await pdfConverter.convert(pdfPath, option);
-        console.log("convertResult:", convertResult);
+        const convertResult = await poppler.pdfToCairo(
+          pdfPath,
+          outputFilePath,
+          options
+        );
       }
     } else {
-      let option = {
-        format: "jpeg",
-        out_dir: outputDir,
-        out_prefix: path.basename(pdfPath, path.extname(pdfPath)),
-        page: null,
+      const outputFilePath = path.join(
+        outputDir, "page")
+
+      const options = {
+        pngFile: true,
       };
 
-      // Convert PDF to images
-      const convertResult = await pdfConverter.convert(pdfPath, option);
-      console.log("convertResult:", convertResult);
+      const convertResult = await poppler.pdfToCairo(
+        pdfPath,
+        outputFilePath,
+        options
+      );
     }
-    
-  
 
     // Log the contents of the output directory
     const filesInOutputDir = await fs.readdir(outputDir);
-    console.log("Files in outputDir:", filesInOutputDir);
-
     // Ensure convertResult gives a valid array of filenames
     if (filesInOutputDir.length === 0) {
       throw new Error("PDF conversion did not produce any image files.");
@@ -165,7 +177,6 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
     await fs.mkdir(zipDir, { recursive: true });
 
     // Ensure that zipPath is a file, not a directory
-    console.log("Creating zip file at:", zipPath);
 
     const output = fs1.createWriteStream(zipPath);
     const archive = archiver("zip", {
@@ -221,14 +232,10 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
         });
       }
     }
-    console.log(zipFold);
-
-    res
-      .status(200)
-      .json({
-        message: "Images successfully converted and zipped",
-        zipFile: `${zipFilename}`,
-      });
+    res.status(200).json({
+      message: "Images successfully converted and zipped",
+      zipFile: `${zipFilename}`,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });
@@ -240,21 +247,22 @@ router.post("/image-pdf", upload.array("file"), async (req, res) => {
     console.log(req.files);
     let imageBytes = [];
 
-    for (let i = 0; i < req.files.length; i++){
-      const imageBytes1 = await fs.readFile(path.join(outputDir, req.files[i].filename));
+    for (let i = 0; i < req.files.length; i++) {
+      const imageBytes1 = await fs.readFile(
+        path.join(outputDir, req.files[i].filename)
+      );
       imageBytes.push(imageBytes1);
-    };
+    }
     const pdfDoc = await PDFDocument.create();
-    
 
     for (const imageByte of imageBytes) {
       const highResImageBuffer = await sharp(imageByte) // Adjust width and height as needed
         .jpeg({ quality: 90 }) // Adjust quality as needed
         .toBuffer();
-      
+
       const image = await pdfDoc.embedJpg(highResImageBuffer);
       const { width, height } = image.scale(1);
-      const page = pdfDoc.addPage([2000,2000]);
+      const page = pdfDoc.addPage([2000, 2000]);
       // const { width, height } = page.getSize();
       if (height > width) {
         page.drawImage(image, {
@@ -271,7 +279,7 @@ router.post("/image-pdf", upload.array("file"), async (req, res) => {
           height: 1000,
         });
       }
-    };
+    }
 
     const pdfBytes = await pdfDoc.save();
 
@@ -279,7 +287,10 @@ router.post("/image-pdf", upload.array("file"), async (req, res) => {
       fs1.mkdirSync(path.join(dirname1, "pdfs/image-pdf"));
     }
 
-    await fs.writeFile(path.join(dirname1,"pdfs/image-pdf/newPdf.pdf"), pdfBytes);
+    await fs.writeFile(
+      path.join(dirname1, "pdfs/image-pdf/newPdf.pdf"),
+      pdfBytes
+    );
 
     for (let i = 0; i < req.files.length; i++) {
       fs1.unlink(path.join(outputDir, req.files[i].filename), (err) => {
@@ -295,6 +306,6 @@ router.post("/image-pdf", upload.array("file"), async (req, res) => {
     console.log(error);
     res.status(400).json({ message: error.message });
   }
-})
+});
 
 module.exports = router;
