@@ -48,6 +48,7 @@ const ChooseFile = () => {
           navigate("/download");
           setFile([]);
         } else {
+          setLoading(false);
           res.error(res.error.message);
         }
 
@@ -55,6 +56,7 @@ const ChooseFile = () => {
         toast.error("Atleast 2 files are required to merge..☹");
       }
     } catch (error) {
+      setLoading(false);
       toast.error(error.message);
     }
   }

@@ -66,6 +66,9 @@ useEffect(() => {
           `${URL1}/zippedimages/${res.data.zipFile}`
         );
         navigate("/download");
+      } else {
+        setLoading(false);
+        toast.error(res.error.message);
       }
     }
   };
@@ -104,11 +107,16 @@ useEffect(() => {
           `${URL1}/zippedimages/${res.data.zipFile}`
         );
         navigate("/download");
+      } else {
+        setLoading(false);
+        toast.error(res.error.message);
       }
-
-
+      } else {
+        setLoading(false);
+        toast.error("Required fields are missing...☹")
       }
     } catch (error) {
+      setLoading(false);
       toast.error(error.message);
     }
   }

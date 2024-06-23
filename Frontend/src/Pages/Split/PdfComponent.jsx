@@ -81,10 +81,12 @@ const PdfComponent = ({ pdfFile }) => {
         navigate("/download");
         setDownload(`${URL1}/splitedPdf/newPdf.pdf`);
       } else {
+        setLoading(false);
         toast.error(res.error.message);
       }
     }
     else {
+      setLoading(false);
       toast.error("Required fields are missing...!");
     }
   };

@@ -11,7 +11,7 @@ const archiver = require("archiver");
 const sharp = require("sharp"); //"@img/sharp-win32-x64": "^0.33.4",
 
 const dirname1 = path.resolve();
-const outputDir = path.join(dirname1, "uploads");
+const outputDir = path.join(dirname1,"Backend", "uploads");
 
 if (!fs1.existsSync(outputDir)) {
   fs1.mkdirSync(outputDir);
@@ -51,11 +51,11 @@ router.post("/merge-files", upload.array("files"), async (req, res) => {
     }
 
     const pdfBytes = await pdf1Doc.save();
-    if (!fs1.existsSync(path.join(dirname1, "pdfs/mergedPdf"))) {
-      fs1.mkdirSync(path.join(dirname1, "pdfs/mergedPdf"));
+    if (!fs1.existsSync(path.join(dirname1, "Backend", "pdfs/mergedPdf"))) {
+      fs1.mkdirSync(path.join(dirname1, "Backend", "pdfs/mergedPdf"));
     }
     await fs.writeFile(
-      path.join(dirname1, "pdfs/mergedPdf/newPdf.pdf"),
+      path.join(dirname1, "Backend", "pdfs/mergedPdf/newPdf.pdf"),
       pdfBytes
     );
     for (let i = 0; i < filenames.length; i++) {
@@ -87,11 +87,11 @@ router.post("/split-files", upload.single("file"), async (req, res) => {
     }
 
     const pdfBytes = await pdfDoc.save();
-    if (!fs1.existsSync(path.join(dirname1, "pdfs/splitedPdf"))) {
-      fs1.mkdirSync(path.join(dirname1, "pdfs/splitedPdf"));
+    if (!fs1.existsSync(path.join(dirname1, "Backend", "pdfs/splitedPdf"))) {
+      fs1.mkdirSync(path.join(dirname1, "Backend", "pdfs/splitedPdf"));
     }
     await fs.writeFile(
-      path.join(dirname1, "pdfs/splitedPdf/newPdf.pdf"),
+      path.join(dirname1, "Backend", "pdfs/splitedPdf/newPdf.pdf"),
       pdfBytes
     );
 
@@ -112,9 +112,14 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
   try {
     const { pages, totalPages } = req?.body;
     const pagesArr = pages?.split(",");
-    let pdfPath = path.join(dirname1, `uploads/${req.file.filename}`);
+    let pdfPath = path.join(
+      dirname1,
+      "Backend",
+      `uploads/${req.file.filename}`
+    );
     let outputDir = path.join(
       path.resolve(),
+      "Backend",
       "images",
       path.basename(pdfPath, path.extname(pdfPath))
     );
@@ -171,7 +176,7 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
 
     // Create ZIP file
     const zipFilename = path.basename(pdfPath, path.extname(pdfPath)) + ".zip";
-    const zipDir = path.join(path.resolve(), "zips");
+    const zipDir = path.join(path.resolve(), "Backend", "zips");
     const zipPath = path.join(zipDir, zipFilename);
 
     await fs.mkdir(zipDir, { recursive: true });
@@ -211,17 +216,22 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
       console.log("Files deleted successfully");
     });
 
-    fs1.unlink(path.join(dirname1, "uploads", req.file.filename), (err) => {
-      if (err) {
-        throw err;
+    fs1.unlink(
+      path.join(dirname1, "Backend", "uploads", req.file.filename),
+      (err) => {
+        if (err) {
+          throw err;
+        }
+        console.log("upload directory is cleared");
       }
-      console.log("upload directory is cleared");
-    });
+    );
 
-    const zipFold = await fs.readdir(path.join(path.resolve(), "zips"));
+    const zipFold = await fs.readdir(
+      path.join(path.resolve(), "Backend", "zips")
+    );
 
     for (let i = 0; i < zipFold.length; i++) {
-      let foldPath = path.join(path.resolve(), "zips", zipFold[i]);
+      let foldPath = path.join(path.resolve(), "Backend", "zips", zipFold[i]);
 
       if (zipFold[i] !== zipFilename) {
         fs1.rm(path.join(foldPath), { recursive: true }, (err) => {
@@ -283,12 +293,12 @@ router.post("/image-pdf", upload.array("file"), async (req, res) => {
 
     const pdfBytes = await pdfDoc.save();
 
-    if (!fs1.existsSync(path.join(dirname1, "pdfs/image-pdf"))) {
-      fs1.mkdirSync(path.join(dirname1, "pdfs/image-pdf"));
+    if (!fs1.existsSync(path.join(dirname1, "Backend", "pdfs/image-pdf"))) {
+      fs1.mkdirSync(path.join(dirname1, "Backend", "pdfs/image-pdf"));
     }
 
     await fs.writeFile(
-      path.join(dirname1, "pdfs/image-pdf/newPdf.pdf"),
+      path.join(dirname1, "Backend", "pdfs/image-pdf/newPdf.pdf"),
       pdfBytes
     );
 

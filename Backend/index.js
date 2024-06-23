@@ -7,10 +7,19 @@ const path = require("path");
 const dirname1 = path.resolve();
 app.use(cors());
 app.use(express.json());
-app.use("/mergedPdf", express.static(path.join(dirname1, "pdfs/mergedPdf")));
-app.use("/splitedPdf", express.static(path.join(dirname1, "pdfs/splitedPdf")));
-app.use("/zippedimages", express.static(path.join(dirname1, "zips")));
-app.use("/image-pdffile", express.static(path.join(dirname1, "pdfs/image-pdf")));
+app.use("/mergedPdf", express.static(path.join(dirname1,"Backend", "pdfs/mergedPdf")));
+app.use(
+  "/splitedPdf",
+  express.static(path.join(dirname1, "Backend", "pdfs/splitedPdf"))
+);
+app.use(
+  "/zippedimages",
+  express.static(path.join(dirname1, "Backend", "zips"))
+);
+app.use(
+  "/image-pdffile",
+  express.static(path.join(dirname1, "Backend", "pdfs/image-pdf"))
+);
 app.use(router);
 
 app.use(express.static(path.join(dirname1, "Frontend/dist")));

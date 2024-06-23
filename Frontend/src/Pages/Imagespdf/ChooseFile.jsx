@@ -39,7 +39,8 @@ const ChooseFile = () => {
   
     const handleImagetoPdf = async(e) => {
         e.preventDefault();
-        if (imgFile) {
+      if (imgFile) {
+        setLoading(true);
             const formData = new FormData();
             for (let i = 0; i < imgFile.length; i++){
                 formData.append("file", imgFile[i]);
@@ -53,10 +54,14 @@ const ChooseFile = () => {
                 },
               }
           );
-            if (res.status === 200) {
+        if (res.status === 200) {
+          setLoading(false);
                 toast.success("Images converted to Pdf successfully");
                 setDownload(`${URL}/image-pdffile/newPdf.pdf`);
                 navigate("/download");
+            } else {
+              setLoading(false);
+              toast.error(res.error.message);
             }
         }
     }
