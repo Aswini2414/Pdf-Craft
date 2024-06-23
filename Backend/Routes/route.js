@@ -259,7 +259,7 @@ router.post("/image-pdf", upload.array("file"), async (req, res) => {
 
     for (let i = 0; i < req.files.length; i++) {
       const imageBytes1 = await fs.readFile(
-        path.join(outputDir, req.files[i].filename)
+        path.join(path.join(dirname1,"Backend", "uploads"), req.files[i].filename)
       );
       imageBytes.push(imageBytes1);
     }
