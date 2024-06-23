@@ -12,6 +12,7 @@ import { URL1 } from "../../helper/helper";
 
 function PdfComponent({ pdfFile }) {
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
   const [pages, setPages] = useState([]);
   const [numPages, setNumPages] = useState();
   const { setDownload, setFile,setPdf,pdf} = useContext(context);
@@ -86,7 +87,7 @@ useEffect(() => {
             return toast.error("Invalid Pages");
           }
         }
-      setLoading(true);
+      setLoading1(true);
       const formData = new FormData();
         formData.append("file", pdfFile);
         formData.append("pages", pages);
@@ -101,7 +102,7 @@ useEffect(() => {
         }
       );
       if (res.status === 200) {
-        setLoading(false);
+        setLoading1(false);
         toast.success("Converted to images successfully");
         setDownload(
           `${URL1}/zippedimages/${res.data.zipFile}`
@@ -112,11 +113,11 @@ useEffect(() => {
         toast.error(res.error.message);
       }
       } else {
-        setLoading(false);
+        setLoading1(false);
         toast.error("Required fields are missing...☹")
       }
     } catch (error) {
-      setLoading(false);
+      setLoading1(false);
       toast.error(error.message);
     }
   }
@@ -175,7 +176,7 @@ useEffect(() => {
           onClick={(e) => handleSpecific(e)}
           className="px-2 py-2 font-bold bg-pink-400 rounded text-white h-full shadow-md drop-shadow"
         >
-          {loading ? (
+          {loading1 ? (
             <span className="loading loading-spinner"></span>
           ) : (
             "Convert "

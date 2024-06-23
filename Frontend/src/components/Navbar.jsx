@@ -1,30 +1,29 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import image from "../assets/image.png";
 import { MdOutlineLightMode } from "react-icons/md";
 import { MdDarkMode } from "react-icons/md";
 import { MdOutlineShare } from "react-icons/md";
 import { Link } from "react-router-dom";
 
-
 const Navbar = () => {
   const [darkmode, setDarkMode] = useState(false);
-  
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme=="true") {
+    if (savedTheme == "true") {
       setDarkMode(!darkmode);
       let element = document.body;
       element.classList.add("dark");
     }
   }, []);
 
-    const handledarkMode = (e) => {
-        e.preventDefault();
-        setDarkMode(!darkmode);
-        let element = document.body;
-      element.classList.toggle("dark");
-      localStorage.setItem('theme', !darkmode);
-    }
+  const handledarkMode = (e) => {
+    e.preventDefault();
+    setDarkMode(!darkmode);
+    let element = document.body;
+    element.classList.toggle("dark");
+    localStorage.setItem("theme", !darkmode);
+  };
   return (
     <>
       <div className="flex items-center justify-between bg-purple-400 px-6 py-6 h-38 w-full">
@@ -44,6 +43,6 @@ const Navbar = () => {
       </div>
     </>
   );
-}
+};
 
-export default Navbar
+export default Navbar;
