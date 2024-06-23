@@ -40,8 +40,6 @@ const Navbar = () => {
               <MdOutlineLightMode className="text-4xl text-white" />
             )}
           </div>
-
-          <MdOutlineShare className="text-4xl" />
         </div>
       </div>
     </>
