@@ -7,7 +7,7 @@ const fs1 = require("fs");
 const { PDFDocument } = require("pdf-lib");
 const pdfConverter = require("pdf-poppler");
 const archiver = require("archiver");
-const sharp = require("sharp");
+const sharp = require("sharp");//"@img/sharp-win32-x64": "^0.33.4",
 
 const dirname1 = path.resolve();
 const outputDir = path.join(dirname1, "uploads");

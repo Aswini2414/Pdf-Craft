@@ -11,7 +11,6 @@
   "author": "Tejaswini",
   "license": "ISC",
   "dependencies": {
-    "@img/sharp-win32-x64": "^0.33.4",
     "archiver": "^7.0.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
