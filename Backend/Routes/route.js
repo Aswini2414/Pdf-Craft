@@ -11,7 +11,7 @@ const archiver = require("archiver");
 const sharp = require("sharp"); //"@img/sharp-win32-x64": "^0.33.4",
 
 const dirname1 = path.resolve();
-const outputDir = path.join(dirname1,"Backend", "uploads");
+const outputDir = path.join(dirname1, "Backend", "uploads");
 
 if (!fs1.existsSync(outputDir)) {
   fs1.mkdirSync(outputDir);
@@ -112,6 +112,7 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
   try {
     const { pages, totalPages } = req?.body;
     const pagesArr = pages?.split(",");
+    console.log(pagesArr + "outside");
     let pdfPath = path.join(
       dirname1,
       "Backend",
@@ -135,14 +136,13 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
 
     const poppler = new Poppler();
     if (pagesArr) {
+      console.log(pagesArr + "from pagesArr");
       for (let i = 0; i < pagesArr.length; i++) {
-        const outputFilePath = path.join(
-          outputDir, `${i}.png`)
-        
+        const outputFilePath = path.join(outputDir, `${i}.png`);
 
         const options = {
-          firstPageToConvert: i,
-          lastPageToConvert: i,
+          firstPageToConvert: Number(pagesArr[i]),
+          lastPageToConvert: Number(pagesArr[i]),
           pngFile: true,
         };
 
@@ -153,8 +153,7 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
         );
       }
     } else {
-      const outputFilePath = path.join(
-        outputDir, "page")
+      const outputFilePath = path.join(outputDir, "page");
 
       const options = {
         pngFile: true,
@@ -209,7 +208,7 @@ router.post("/pdf-image", upload.single("file"), async (req, res) => {
     // Finalize the archive creation
     await archive.finalize();
 
-    fs1.rm(path.join(outputDir), { recursive: true }, (err) => {
+    fs1.rmdir(path.join(outputDir), { recursive: true }, (err) => {
       if (err) {
         throw err;
       }
@@ -259,7 +258,10 @@ router.post("/image-pdf", upload.array("file"), async (req, res) => {
 
     for (let i = 0; i < req.files.length; i++) {
       const imageBytes1 = await fs.readFile(
-        path.join(path.join(dirname1,"Backend", "uploads"), req.files[i].filename)
+        path.join(
+          path.join(dirname1, "Backend", "uploads"),
+          req.files[i].filename
+        )
       );
       imageBytes.push(imageBytes1);
     }

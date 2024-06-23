@@ -57,7 +57,7 @@ const ChooseFile = () => {
           );
         if (res.status === 200) {
           setLoading(false);
-          setDownload(`${URL}/image-pdffile/newPdf.pdf`);
+          setDownload(`${URL1}/image-pdffile/newPdf.pdf`);
                 toast.success("Images converted to Pdf successfully");
                 navigate("/download");
             } else {

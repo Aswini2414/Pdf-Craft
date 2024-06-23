@@ -83,7 +83,8 @@ useEffect(() => {
           if (regex.test(pages[i])) {
             return toast.error("Enter only numeric");
           }
-          if (!(pages[i] > 1 && pages[i] <= numPages)) {
+          if (!(pages[i] >= 1 && pages[i] <= numPages)) {
+            console.log(pages);
             return toast.error("Invalid Pages");
           }
         }
