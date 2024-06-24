@@ -99,13 +99,18 @@ const PdfComponent = ({ pdfFile }) => {
             <div className="flex items-center justify-between gap-20 mb-4">
               <div className="flex items-center justify-around gap-4">
                 <h1 className="text-2xl text-yellow-500 font-bold">From</h1>
+                {console.log("text")}
                 <input
                   type="number"
+                  inputMode="numeric"
                   value={fromPage}
+                  pattern="\d*"
+                  step="1"
+                  required
                   min="1"
                   onChange={handleFromPage}
                   max={numPages}
-                  className="text-2xl text-center rounded border-2 border-purple-400 hover:border-pink-400 active:border-pink-400 focus:border-pink-400 focus:outline-none"
+                  className="text-2xl text-center rounded border-2 border-purple-400 hover:border-pink-400 active:border-pink-400 focus:border-pink-400 focus:outline-none custom-number-input"
                 />
               </div>
               <div className="flex items-center justify-around gap-4">
@@ -116,7 +121,7 @@ const PdfComponent = ({ pdfFile }) => {
                   min="1"
                   onChange={handleToPage}
                   max={numPages}
-                  className="text-2xl text-center rounded border-2 border-purple-400 hover:border-pink-400 active:border-pink-400 focus:border-pink-400 focus:outline-none"
+                  className="text-2xl text-center rounded border-2 border-purple-400 hover:border-pink-400 active:border-pink-400 focus:border-pink-400 focus:outline-none custom-number-input"
                 />
               </div>
             </div>

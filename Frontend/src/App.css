@@ -22,3 +22,30 @@ body{
 .react-pdf__Page{
     background:#d8b4fe !important;
 }
+
+/* Ensure the increment buttons are displayed correctly */
+.custom-number-input {
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.custom-number-input::-webkit-inner-spin-button,
+.custom-number-input::-webkit-outer-spin-button {
+  -webkit-appearance: inner-spin-button;
+  appearance: inner-spin-button;
+  display: inline-block;
+  /* Adjust sizes if necessary */
+  width: 1em;
+  height: 1em;
+}
+
+.custom-number-input::-moz-inner-spin-button,
+.custom-number-input::-moz-outer-spin-button {
+  -moz-appearance: inner-spin-button;
+  appearance: inner-spin-button;
+  display: inline-block;
+  /* Adjust sizes if necessary */
+  width: 1em;
+  height: 1em;
+}
